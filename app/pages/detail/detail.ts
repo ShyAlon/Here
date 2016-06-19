@@ -5,9 +5,9 @@ import {NavController, NavParams} from 'ionic-angular';
   templateUrl: 'build/pages/detail/detail.html'
 })
 export class DetailPage {
-  color: string;
+  meeting: Object;
 
   constructor(private _navController: NavController, private _navParams: NavParams) {
-    this.color = _navParams.get('color');
+    this.meeting = _navParams.get('meeting');
   }
 }

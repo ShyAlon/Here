@@ -8,14 +8,18 @@ import {Server} from '../../services/server';
   providers: [Server]
 })
 export class HomePage {
-  items:String[];
+  items:Object;
   server:Server;
   constructor(private _navController: NavController, server: Server) {
     this.server = server;
-    this.items = this.server.getMeetings();
+    this.server.getMeetings().then(data =>{
+      this.items = data;
+    })
   }
 
-  pushPage(buttonColor: string) {
-    this._navController.push(DetailPage, { color: buttonColor });
+  pushPage(meeting: Object) {
+    this._navController.push(DetailPage, { meeting: meeting });
   }
+
+
 }

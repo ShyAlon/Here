@@ -1,0 +1,34 @@
+<ion-navbar *navbar>
+  <ion-title>
+    Participant
+  </ion-title>
+</ion-navbar>
+
+<ion-content class="participant">
+  <h2 text-center>{{participant.name}}</h2>
+  <ion-list>
+    <ion-item>
+      <ion-label>Required</ion-label>
+      <ion-toggle checked="participant.critical"></ion-toggle>
+    </ion-item>
+    <ion-item-divider light>Items</ion-item-divider>
+    <ion-item>
+      <!--ion-icon name="leaf" item-left></ion-icon-->
+      <ion-label>Brings</ion-label>
+      <ion-input type="text" placeholder="Item" #newItem></ion-input>
+      <button item-right round (click)="addItem($event, newItem.value)">Add</button>
+    </ion-item>
+
+    <ion-item-sliding *ngFor="let item of participant.items">
+      <ion-item>
+          {{item}}
+      </ion-item>
+      <ion-item-options>
+        <button danger (click)="deleteItem($event, item)">
+          Delete {{item}}
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,8 @@
+{
+  "name": "Here",
+  "app_id": "here",
+  "watchPatterns": [
+    "www/js/*",
+    "!www/css/**/*"
+  ]
+}

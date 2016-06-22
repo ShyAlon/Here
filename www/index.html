@@ -10,13 +10,16 @@
   <link ios-href="build/css/app.ios.css" rel="stylesheet">
   <link md-href="build/css/app.md.css" rel="stylesheet">
   <link wp-href="build/css/app.wp.css" rel="stylesheet">
-</head>
 
+<!--script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script-->
+</head>
+<script src="cordova.js"></script>
 <body>
   <ion-app></ion-app>
 
   <!-- cordova.js required for cordova apps -->
-  <script src="cordova.js"></script>
+  <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
+<!-- <script src="cordova.js"></script> -->
   <!-- Polyfill needed for platforms without Promise and Collection support -->
   <script src="build/js/es6-shim.min.js"></script>
   <!-- Zone.js and Reflect-metadata  -->

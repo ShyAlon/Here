@@ -45,19 +45,26 @@ export class MeetingParticipant extends ItemBase  {
     if(participantId){
       where = where + ' and participant = ' + participantId;
     }
-    return db.select('participantMeetings', ['participant', 'meeting'], function boo () {
+    return db.select('participantMeetings', ['id', 'participant', 'meeting'], function boo () {
       return new MeetingParticipant();
     }, where);
   }
 }
 
 export class Item extends ItemBase  {
-  constructor(public text: String,  public participantMeeting: Number) {
+  constructor(public text: String = '',  public participantMeeting: Number = 0) {
     super();
   }
 
   insert(db: DB){
     db.insert('items', ['text', 'participantMeeting'], [Item.quote(this.text), this.participantMeeting])
+  }
+
+  static select(db: DB, meetingParticipantId: Number){
+    let where =' where meetingParticipant = ' + meetingParticipantId;
+    return db.select('items', ['text', 'participantMeeting'], function boo () {
+      return new Item();
+    }, where);
   }
 }
 
@@ -68,7 +75,7 @@ export class Phone {
 }
 
 export class Participant extends ItemBase {
-  items: String[];
+  items: Item[];
   participantMeeting: MeetingParticipant;
   constructor(public id=0, public pid: String ='', public name : String='', public email: String='', public address: String='', public gender: String='', public phone: Phone=null){
     super();

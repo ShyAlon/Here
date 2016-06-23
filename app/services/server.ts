@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import {Participant, Phone, Meeting, MeetingParticipant} from '../common/meeting'
+import {Participant, Phone, Meeting, MeetingParticipant, Item} from '../common/meeting'
 import {DB} from './db'
 
 @Injectable()
@@ -28,7 +28,11 @@ export class Server {
     }
 
     getMeetingParticipant(participantId, meetingId){
-        return MeetingParticipant.select(this.db, participantId, meetingId);
+        return MeetingParticipant.select(this.db, meetingId, participantId);
+    }
+
+    getItems(meetingParticipantId){
+        return Item.select(this.db, meetingParticipantId);
     }
 
 

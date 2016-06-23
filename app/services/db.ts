@@ -28,7 +28,7 @@ export class DB {
     }
 
     createItemTable(){
-        return this.createTable('items', 'text TEXT, participantMeeting INTEGER');
+        return this.createTable('items', 'text TEXT, meetingParticipant INTEGER');
     }
 
     createTable(name, columns){
@@ -53,6 +53,8 @@ export class DB {
 
     select(table, fieldArray, getObject, where = ''){
         let str = "SELECT * FROM " + table + where;
+        console.log(str);
+        
         return DB.storage.query(str).then((data) => {
                 let result = [];
                 //console.log("DB::Select Success", data);
@@ -67,13 +69,13 @@ export class DB {
                         result.push(obj);
                     }
                 }
-                // console.log(data.res.rows);
-                // console.log(result);
+                //console.log(data.res.rows);
+                //console.log(result);
                 console.log("DB::Select Success", str);
                 return result;
             }, (error) => {
                 console.log("DB::Select ERROR", str);
-                console.log("DB::Select ERROR", JSON.stringify(error));
+                console.log("DB::Select ERROR", error);
             });
     }
 }

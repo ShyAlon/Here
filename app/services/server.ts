@@ -27,6 +27,11 @@ export class Server {
         return new Promise((resolve, reject) => this.getPersonImpl(resolve, reject, id));
     }
 
+    getMeetingParticipant(participantId, meetingId){
+        return MeetingParticipant.select(this.db, participantId, meetingId);
+    }
+
+
     private getPersonImpl(resolve, reject, id) {
         let found = false;
         for (let i = 0; i < this.pool.length; i++) {

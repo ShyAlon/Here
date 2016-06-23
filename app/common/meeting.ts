@@ -40,8 +40,11 @@ export class MeetingParticipant extends ItemBase  {
     db.insert('participantMeeting', ['participant', 'meeting'], [this.participant, this.meeting])
   }
 
-  static select(db: DB, meetingId: Number){
+  static select(db: DB, meetingId: Number, participantId: Number = 0){
     let where =' where meeting = ' + meetingId;
+    if(participantId){
+      where = where + ' and participant = ' + participantId;
+    }
     return db.select('participantMeetings', ['participant', 'meeting'], function boo () {
       return new MeetingParticipant();
     }, where);
@@ -66,6 +69,7 @@ export class Phone {
 
 export class Participant extends ItemBase {
   items: String[];
+  participantMeeting: MeetingParticipant;
   constructor(public id=0, public pid: String ='', public name : String='', public email: String='', public address: String='', public gender: String='', public phone: Phone=null){
     super();
   }
@@ -75,7 +79,7 @@ export class Participant extends ItemBase {
   }
 
   static selectIn(db: DB, meetingParticipants: Object[]){
-    if(meetingParticipants.length == 0){
+    if(!meetingParticipants || meetingParticipants.length == 0){
       return new Promise((resolve, reject) => resolve([]));
     }
 

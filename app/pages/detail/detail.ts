@@ -45,7 +45,7 @@ export class DetailPage {
       console.log('edit', name);
       event.preventDefault(); // added for ionic
       event.stopPropagation();
-      this._navController.push(ParticipantPage, { participant: name });
+      this._navController.push(ParticipantPage, { participant: name, meeting: this.meeting });
     }
   }
 

@@ -20,7 +20,7 @@ export class DB {
     }
 
     createParticipantsTable(){
-        return this.createTable('participants', 'pid TEXT NOT NULL');
+        return this.createTable('participants', 'pid TEXT NOT NULL UNIQUE');
     }
 
     createParticipantMeetingsTable(){
@@ -43,34 +43,37 @@ export class DB {
         let fields = fieldArray.join();
         let values = valueArray.join();
         let query = "INSERT INTO " + table + " (" + fields + ") VALUES ( " + values + " )";
-        // console.log('Insert', query);
+        console.log('Insert', query);
         DB.storage.query(query).then((data) => {
             // console.log(JSON.stringify(data.res));
         }, (error) => {
-            console.log("ERROR -> " + JSON.stringify(error));
+            console.log("ERROR", error);
         });
     }
 
-    select(table, fieldArray, getObject){
-        return DB.storage.query("SELECT * FROM " + table).then((data) => {
+    select(table, fieldArray, getObject, where = ''){
+        let str = "SELECT * FROM " + table + where;
+        return DB.storage.query(str).then((data) => {
                 let result = [];
+                //console.log("DB::Select Success", data);
                 if(data.res.rows.length > 0) {
                     for(let i = 0; i < data.res.rows.length; i++) {
                         let obj = getObject();
                         for(let j = 0; j < fieldArray.length; j++){
                             obj[fieldArray[j]] = data.res.rows.item(i)[fieldArray[j]];
-                            console.log('field', fieldArray[j] + ' ' + data.res.rows.item(i)[fieldArray[j]]);
+                            //console.log('field', fieldArray[j] + ' ' + data.res.rows.item(i)[fieldArray[j]]);
                         }
                         //result.push({firstname: data.res.rows.item(i).firstname, lastname: data.res.rows.item(i).lastname});
-                        
                         result.push(obj);
                     }
                 }
                 // console.log(data.res.rows);
                 // console.log(result);
+                console.log("DB::Select Success", str);
                 return result;
             }, (error) => {
-                console.log("ERROR -> " + JSON.stringify(error.err));
+                console.log("DB::Select ERROR", str);
+                console.log("DB::Select ERROR", JSON.stringify(error));
             });
     }
 }

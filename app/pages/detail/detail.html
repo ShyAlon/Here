@@ -15,7 +15,7 @@
     Untrack
   </button>  
   <ion-list>
-    <ion-item-sliding *ngFor="let participant of meeting.participants" (click)="editParticipant($event, participant)">
+    <ion-item-sliding *ngFor="let participant of participants" (click)="editParticipant($event, participant)">
       <ion-item>
           {{participant.name}}
       </ion-item>

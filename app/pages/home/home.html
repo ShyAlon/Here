@@ -12,7 +12,7 @@
   <button block secondary (click)="pushPage('Secondary')">Secondary</button-->
   <ion-list>
     <ion-item *ngFor="let item of items" (click)="pushPage(item)">
-      {{item.title}}: {{item.time | date:'medium'}}
+      {{item.id}}: {{item.title}}: {{item.time | date:'medium'}}
     </ion-item>
   </ion-list>
 </ion-content>

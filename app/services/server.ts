@@ -1,7 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import {Meeting} from '../common/meeting';
-import {Participant, Phone} from '../common/meeting'
+import {Participant, Phone, Meeting, MeetingParticipant} from '../common/meeting'
 import {DB} from './db'
 
 @Injectable()
@@ -47,6 +46,24 @@ export class Server {
 
     getMeetings() {
         return Meeting.select(this.db);
+    }
+
+    // Get the participant ids and then populate the participants
+    getMeetingParticipants(meetingId: Number){
+        return MeetingParticipant.select(this.db, meetingId).then((data) =>{
+            // console.log('Meeting Participants', data);
+            return Participant.selectIn(this.db, data);
+        }, (error) => {console.log(error);});
+    }
+
+    getContact(pid){
+        this.pool = this.pool || Server.getPool();
+        for(let i = 0; i < this.pool.length; i++){
+            if(this.pool[i].pid == pid){
+                return this.pool[i];
+            }
+        }
+        return null;
     }
 
     static generateMeeting(counter: Number) {

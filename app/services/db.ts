@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Storage, SqlStorage} from 'ionic-angular';
-import {Participant, Phone, Meeting} from '../common/meeting'
+import {Participant, Phone, Meeting, ItemBase} from '../common/meeting'
 
 @Injectable()
 export class DB {
@@ -24,7 +24,7 @@ export class DB {
     }
 
     createParticipantMeetingsTable(){
-        return this.createTable('participantMeetings', 'participant INTEGER, meeting INTEGER');
+        return this.createTable('meetingParticipants', 'participant INTEGER, meeting INTEGER, importance INTEGER');
     }
 
     createItemTable(){
@@ -39,16 +39,31 @@ export class DB {
         });
     }
 
-    insert(table, fieldArray, valueArray){
+    insert(table, fieldArray, valueArray, item: ItemBase){
         let fields = fieldArray.join();
         let values = valueArray.join();
         let query = "INSERT INTO " + table + " (" + fields + ") VALUES ( " + values + " )";
         console.log('Insert', query);
-        DB.storage.query(query).then((data) => {
-            // console.log(JSON.stringify(data.res));
-        }, (error) => {
-            console.log("ERROR", error);
-        });
+        return DB.storage.query(query);
+    }
+    //  UPDATE COMPANY SET ADDRESS = 'Texas' WHERE ID = 6;
+
+    update(table, fieldArray, valueArray, item: ItemBase){
+        let fields = fieldArray.join();
+        let values = valueArray.join();
+        let query = "UPDATE " + table + " set ";
+        for (let i = 0; i < fieldArray.length; i++){
+            query = query + fieldArray[i] + ' = ' + valueArray[i] + (i == fieldArray.length -1 ?  ' ' : ', ');
+        }
+        query = query + ' where id = ' + item.id;
+        console.log('update', query);
+        return DB.storage.query(query);
+    }
+
+    delete(table, item: ItemBase){
+        let query = "DELETE FROM " + table + " WHERE ID = " + item.id;
+        console.log('Delete', query);
+        return DB.storage.query(query);
     }
 
     select(table, fieldArray, getObject, where = ''){

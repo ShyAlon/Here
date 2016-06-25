@@ -10,6 +10,15 @@ export class ItemBase {
     throw "You should never inset an item";
   }
 
+  insertCallback(data){
+    console.log(data);
+    if(this){
+      this.id = data.res.insertId;
+    } else {
+      console.log('Shit');
+    }
+  }
+
   static quote(str){
     return "'" + str + "'";
   }
@@ -21,7 +30,7 @@ export class Meeting extends ItemBase  {
   }
 
   insert(db: DB){
-    db.insert('meetings', ['title', 'timestamp'], [Item.quote(this.title), this.time.getTime()])
+    db.insert('meetings', ['title', 'timestamp'], [Item.quote(this.title), this.time.getTime()], this)
   }
 
   static select(db: DB){
@@ -32,12 +41,17 @@ export class Meeting extends ItemBase  {
 }
 
 export class MeetingParticipant extends ItemBase  {
-  constructor(public meeting: Number=0,  public participant: Number=0) {
+  constructor(public meeting: Number = 0,  public participant: Number = 0, public importance: Number = 0) {
     super();
   }
 
   insert(db: DB){
-    db.insert('participantMeeting', ['participant', 'meeting'], [this.participant, this.meeting])
+    return db.insert('meetingParticipants', ['participant', 'meeting', 'importance'], [this.participant, this.meeting, this.importance], this);
+  }
+
+  update(db: DB){
+    // UPDATE COMPANY SET ADDRESS = 'Texas' WHERE ID = 6;
+    return db.update('meetingParticipants', ['participant', 'meeting', 'importance'], [this.participant, this.meeting, this.importance], this);
   }
 
   static select(db: DB, meetingId: Number, participantId: Number = 0){
@@ -45,7 +59,7 @@ export class MeetingParticipant extends ItemBase  {
     if(participantId){
       where = where + ' and participant = ' + participantId;
     }
-    return db.select('participantMeetings', ['id', 'participant', 'meeting'], function boo () {
+    return db.select('meetingParticipants', ['id', 'participant', 'meeting', 'importance'], function boo () {
       return new MeetingParticipant();
     }, where);
   }
@@ -57,12 +71,16 @@ export class Item extends ItemBase  {
   }
 
   insert(db: DB){
-    db.insert('items', ['text', 'participantMeeting'], [Item.quote(this.text), this.participantMeeting])
+    return db.insert('items', ['text', 'meetingParticipant'], [Item.quote(this.text), this.participantMeeting], this).then((data) => this.insertCallback(data));
+  }
+
+  delete(db: DB){
+    return db.delete('items', this).then((data)=> console.log('Deleted', data));
   }
 
   static select(db: DB, meetingParticipantId: Number){
     let where =' where meetingParticipant = ' + meetingParticipantId;
-    return db.select('items', ['text', 'participantMeeting'], function boo () {
+    return db.select('items', ['id', 'text', 'meetingParticipant'], function boo () {
       return new Item();
     }, where);
   }
@@ -82,10 +100,10 @@ export class Participant extends ItemBase {
   }
 
   insert(db: DB){
-    db.insert('participants', ['pid'], [Item.quote(this.pid)]);
+    db.insert('participants', ['pid'], [Item.quote(this.pid)], this);
   }
 
-  static selectIn(db: DB, meetingParticipants: Object[]){
+  static selectIn(db: DB, meetingParticipants: MeetingParticipant[]){
     if(!meetingParticipants || meetingParticipants.length == 0){
       return new Promise((resolve, reject) => resolve([]));
     }

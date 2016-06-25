@@ -9,7 +9,7 @@
   <ion-list>
     <ion-item>
       <ion-label>Required</ion-label>
-      <ion-toggle checked="participant.critical"></ion-toggle>
+      <ion-toggle checked="participant.importance > 0" (ionChange)="requiredToggled()"></ion-toggle>
     </ion-item>
     <ion-item-divider light>Items</ion-item-divider>
     <ion-item>
@@ -21,7 +21,7 @@
 
     <ion-item-sliding *ngFor="let item of participant.items">
       <ion-item>
-          {{item.text}}
+          {{item.id}}:  {{item.text}} 
       </ion-item>
       <ion-item-options>
         <button danger (click)="deleteItem($event, item)">

@@ -11,27 +11,37 @@ import {Server} from '../../services/server'
 export class DetailPage {
   meeting: Meeting;
   participants: Participant[];
+  startTime: string;
+  endTime: string;
+  title: String;
 
   constructor(private _navController: NavController, private _navParams: NavParams, private server: Server) {
     this.meeting = _navParams.get('meeting');
-
-    this.server.getMeetingParticipants(this.meeting.id).then( (data: Participant[]) =>{
-      console.log('Got participants', data);
-      this.participants = data;
-      // Now get the contact data from the Contacts services
-      let result = [];
-      for( let i = 0; i < data.length; i++){
-        let contact = server.getContact(data[i].pid);
-        console.log('Contact', contact);
-        if(contact){
-          result.push(contact);
-        } else {
-          console.log('No Contant');
+    this.title = this.meeting.title;
+    console.log(this.meeting);
+    if(this.meeting.id){
+        this.server.getMeetingParticipants(this.meeting.id).then( (data: Participant[]) =>{
+        console.log('Got participants', data);
+        this.participants = data;
+        // Now get the contact data from the Contacts services
+        let result = [];
+        for( let i = 0; i < data.length; i++){
+          let contact = server.getContact(data[i].pid);
+          console.log('Contact', contact);
+          if(contact){
+            result.push(contact);
+          } else {
+            console.log('No Contant');
+          }
         }
+        console.log('Contacts', result);
+        this.participants = result;
+      });
       }
-      console.log('Contacts', result);
-      this.participants = result;
-    });
+      console.log(this.meeting);
+      
+      this.startTime = this.meeting.startTime ? this.meeting.startTime.toISOString() : (new Date()).toISOString();
+      this.endTime = this.meeting.endTime ? this.meeting.endTime.toISOString() : (new Date()).toISOString();
   }
 
   deleteParticipant(event, name) {
@@ -55,5 +65,19 @@ export class DetailPage {
 
   unTrack(){
     this.meeting.scheduled = false;
+  }
+
+  editMeeting(){
+    this.meeting.startTime = new Date(this.startTime);
+    this.meeting.endTime = new Date(this.endTime);
+    console.log(this.meeting);
+    this.meeting.update(this.server.db);
+  }
+
+  onTitleBlur(){
+    if (this.title != this.meeting.title){
+      this.meeting.title = this.title;
+      this.meeting.update(this.server.db);
+    }
   }
 }

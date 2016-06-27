@@ -10,25 +10,25 @@ import {Meeting} from '../../common/meeting';
   providers: [Server]
 })
 export class HomePage {
-  items:Meeting[];
-
-  constructor(private _navController: NavController, private server: Server){//, private db: DB) {
-    this.server.getMeetings().then( (data: Meeting[]) =>{
-      //console.log('Got meetings');
+  items: Meeting[];
+  constructor(private _navController: NavController, private server: Server) {//, private db: DB) {
+    this.server.getMeetings().then((data: Meeting[]) => {
+      Server.items = data;
       this.items = data;
-      // for( let i = 0; i < data.length; i++){
-      //   data[i].insert(this.server.db);
-      // }
-      // let pool = Server.getPool();
-      // for(let i = 0; i < pool.length; i++){
-      //   console.log('Insert', pool[i]);
-      //   pool[i].insert(this.server.db);
-      // }
     });
   }
 
   pushPage(meeting: Meeting) {
-    console.log('pushing');
     this._navController.push(DetailPage, { meeting: meeting });
+  }
+
+  createMeeting() {
+    let meeting = new Meeting();
+    meeting.insert(this.server.db).then((id) => {
+      meeting.id = id;
+      console.log(meeting);
+      Server.items.push(meeting);
+      this.pushPage(meeting);
+    });
   }
 }

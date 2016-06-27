@@ -10,9 +10,12 @@
   <button block danger (click)="pushPage('Danger')">Danger</button>
   <button block primary (click)="pushPage('Primary')">Primary</button>
   <button block secondary (click)="pushPage('Secondary')">Secondary</button-->
+  <button block primary (click)="createMeeting()">Set New Meeting</button>
+
   <ion-list>
+    <ion-item-divider light>Meetings</ion-item-divider>
     <ion-item *ngFor="let item of items" (click)="pushPage(item)">
-      {{item.id}}: {{item.title}}: {{item.time | date:'medium'}}
+      {{item.title}}: {{item.startTime | date:'medium'}}
     </ion-item>
   </ion-list>
 </ion-content>

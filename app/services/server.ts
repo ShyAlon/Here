@@ -12,14 +12,12 @@ export class Server {
     pool: Participant[];
     storage: Storage;
     static milis: number;
+    static items:Meeting[];
 
     constructor(public db: DB) {
         this.meetings = [];
         this.pool = Server.getPool();
         Server.milis = 1000 * 60 * 60 * 24 * 365;
-        for (let i = 0; i < 20; i++) {
-            this.meetings.push(Server.generateMeeting(i));
-        }
     }
 
 
@@ -73,13 +71,6 @@ export class Server {
             }
         }
         return null;
-    }
-
-    static generateMeeting(counter: Number) {
-        let now = new Date();
-        now = new Date(now.getTime() + Math.random() * this.milis);
-        let meeting = new Meeting(now, '#' + counter + ': ' + Server.getTitle(), Server.getParticipants(), Math.random() > 0.5);
-        return meeting;
     }
 
     static getTitle() {

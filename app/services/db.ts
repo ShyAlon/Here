@@ -6,36 +6,36 @@ import {Participant, Phone, Meeting, ItemBase} from '../common/meeting'
 export class DB {
     static storage: Storage;
 
-    constructor() {
+    constructor() {     
         DB.storage = new Storage(SqlStorage);
         this.createMeetingTable()
         .then(()=>this.createParticipantsTable)
         .then(()=>this.createParticipantMeetingsTable)
-        .then(()=>this.createItemTable);
-        // .then(() => console.log(' DB Initialized'))
+        .then(()=>this.createItemTable)
+        .then(() => console.log(' DB Initialized'))
     }
 
     createMeetingTable(){
-        return this.createTable('meetings', 'title TEXT, timestamp INTEGER');
+        return this.createTable('meetings', 'title	TEXT,	timestamp	INTEGER,	startTime	INTEGER,	endTime	INTEGER,	location	TEXT');
     }
 
     createParticipantsTable(){
-        return this.createTable('participants', 'pid TEXT NOT NULL UNIQUE');
+        return this.createTable('participants', 'pid	TEXT NOT NULL UNIQUE');
     }
 
     createParticipantMeetingsTable(){
-        return this.createTable('meetingParticipants', 'participant INTEGER, meeting INTEGER, importance INTEGER');
+        return this.createTable('meetingParticipants', 'participant	INTEGER,	meeting	INTEGER,	importance	INTEGER');
     }
 
     createItemTable(){
-        return this.createTable('items', 'text TEXT, meetingParticipant INTEGER');
+        return this.createTable('items', 	'text	TEXT,	meetingParticipant	INTEGER');
     }
 
     createTable(name, columns){
         return DB.storage.query('CREATE TABLE IF NOT EXISTS ' + name + ' (id INTEGER PRIMARY KEY AUTOINCREMENT, ' + columns + ')').then((data) => {
-            // console.log("TABLE CREATED -> " + JSON.stringify(data.res));
+            console.log("TABLE CREATED -> ", data);
         }, (error) => {
-            console.log("ERROR -> " + JSON.stringify(error.err));
+            console.log("ERROR -> ", error.err);
         });
     }
 
@@ -75,12 +75,7 @@ export class DB {
                 //console.log("DB::Select Success", data);
                 if(data.res.rows.length > 0) {
                     for(let i = 0; i < data.res.rows.length; i++) {
-                        let obj = getObject();
-                        for(let j = 0; j < fieldArray.length; j++){
-                            obj[fieldArray[j]] = data.res.rows.item(i)[fieldArray[j]];
-                            //console.log('field', fieldArray[j] + ' ' + data.res.rows.item(i)[fieldArray[j]]);
-                        }
-                        //result.push({firstname: data.res.rows.item(i).firstname, lastname: data.res.rows.item(i).lastname});
+                        let obj = getObject(data.res.rows.item(i));
                         result.push(obj);
                     }
                 }

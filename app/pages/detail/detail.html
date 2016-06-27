@@ -5,30 +5,55 @@
 </ion-navbar>
 
 <ion-content class="detail">
-  <h1 text-center>View Meeting:</h1>
-  <h2 text-center>{{meeting.title}}</h2>
-  <h3 text-center>{{meeting.time | date:'medium'}}</h3>
   <button block primary *ngIf="!meeting.scheduled" (click)="track()">
     Track
   </button>
   <button block danger *ngIf="meeting.scheduled" (click)="unTrack()">
     Untrack
-  </button>  
+  </button>
   <ion-list>
-    <ion-item-sliding *ngFor="let participant of participants" (click)="editParticipant($event, participant)">
+    <ion-item-group>
       <ion-item>
-          {{participant.name}}
+        <ion-label>Title</ion-label>
+        <ion-input type="text" placeholder="Title" style="font-size: larger" [(ngModel)]="title" (blur)="onTitleBlur($event)" ></ion-input>
       </ion-item>
-      <ion-item-options>
-        <button (click)="editParticipant($event, name)">
-          Edit {{participant.name}}
-          <ion-icon name="contact"></ion-icon>
-        </button>
-        <button danger (click)="deleteParticipant($event, name)">
-          Delete {{participant.name}}
-          <ion-icon name="trash"></ion-icon>
-        </button>
-      </ion-item-options>
-    </ion-item-sliding>
+      <ion-item-divider light>Details</ion-item-divider>
+      <ion-item>
+        <ion-label>Start Time</ion-label>
+        <ion-datetime displayFormat="MMM DD, YYYY HH:mm" pickerFormat="MMM DD, YYYY HH:mm" [(ngModel)]="startTime" (ionChange)="editMeeting()"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>End Time</ion-label>
+        <ion-datetime displayFormat="MMM DD, YYYY HH:mm" min="{{startTime}}" pickerFormat="MMM DD, YYYY HH:mm" [(ngModel)]="endTime"
+          (ionChange)="editMeeting()"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>Location</ion-label>
+        <ion-input type="text" placeholder="Location" [(ngModel)]="meeting.location"></ion-input>
+        <button item-right round (click)="addItem($event, newItem.value)">Search</button>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider light>Participants</ion-item-divider>
+      <ion-item>
+        <ion-label>Add From Contact List</ion-label>
+        <button item-right round (click)="addParticipant($event)">Add</button>
+      </ion-item>
+      <ion-item-sliding *ngFor="let participant of participants" (click)="editParticipant($event, participant)">
+        <ion-item>
+          {{participant.name}}
+        </ion-item>
+        <ion-item-options>
+          <button (click)="editParticipant($event, name)">
+            Edit {{participant.name}}
+            <ion-icon name="contact"></ion-icon>
+          </button>
+          <button danger (click)="deleteParticipant($event, name)">
+            Delete {{participant.name}}
+            <ion-icon name="trash"></ion-icon>
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-item-group>
   </ion-list>
 </ion-content>

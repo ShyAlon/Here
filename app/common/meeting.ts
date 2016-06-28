@@ -78,8 +78,10 @@ export class MeetingParticipant extends ItemBase {
     }, where);
   }
 
+  
+
   static delete(db: DB, meetingId: Number, pid: string) {
-    let where = ' where meeting = ' + meetingId + ' and pid = ' + Item.quote(pid);
+    let where = ' meeting = ' + meetingId + ' and pid = ' + Item.quote(pid);
     return db.deleteWhere('meetingParticipants', where);
   }
 }

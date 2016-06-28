@@ -15,7 +15,7 @@
     <ion-item-group>
       <ion-item>
         <ion-label>Title</ion-label>
-        <ion-input type="text" placeholder="Title" style="font-size: larger" [(ngModel)]="title" (blur)="onTitleBlur($event)" ></ion-input>
+        <ion-input type="text" placeholder="Title" style="font-size: larger" [(ngModel)]="title" (blur)="onTitleBlur($event)"></ion-input>
       </ion-item>
       <ion-item-divider light>Details</ion-item-divider>
       <ion-item>
@@ -39,21 +39,10 @@
         <ion-label>Add From Contact List</ion-label>
         <button item-right round (click)="addParticipant($event)">Add</button>
       </ion-item>
-      <ion-item-sliding *ngFor="let participant of meeting.participants" (click)="editParticipant($event, participant)">
-        <ion-item>
-          {{participant.displayName}}
-        </ion-item>
-        <ion-item-options>
-          <button (click)="editParticipant($event, name)">
-            Edit {{participant.displayName}}
-            <ion-icon name="contact"></ion-icon>
-          </button>
-          <button danger (click)="deleteParticipant($event, name)">
-            Delete {{participant.displayName}}
-            <ion-icon name="trash"></ion-icon>
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
+      <ion-item *ngFor="let participant of meeting.participants" (click)="editParticipant($event, participant)">
+        <ion-label>{{participant.displayName}}</ion-label>
+        <button item-right round danger (click)="deleteParticipant($event, participant)"><ion-icon name="trash"></ion-icon></button>
+      </ion-item>
     </ion-item-group>
   </ion-list>
 </ion-content>

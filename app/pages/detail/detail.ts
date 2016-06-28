@@ -47,7 +47,16 @@ export class DetailPage {
     console.log('delete', p);
     event.preventDefault(); // added for ionic
     event.stopPropagation();
-    MeetingParticipant.delete(this.server.db, this.meeting.id, p.pid).then((data) => console.log(data));
+    MeetingParticipant.delete(this.server.db, this.meeting.id, p.pid).then((data) => {
+      console.log(data);
+      for (let i = 0; i < this.meeting.participants.length; i++){
+        let par = this.meeting.participants[i];
+        if(par.pid == p.pid){
+          this.meeting.participants.splice(i, 1);
+          break;
+        }
+      }
+    });
   }
 
   editParticipant(event, name) {

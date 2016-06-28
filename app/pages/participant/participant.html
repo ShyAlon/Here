@@ -21,7 +21,7 @@
 
     <ion-item-sliding *ngFor="let item of participant.items">
       <ion-item>
-          {{item.id}}:  {{item.text}} 
+          {{item.text}} 
       </ion-item>
       <ion-item-options>
         <button danger (click)="deleteItem($event, item)">

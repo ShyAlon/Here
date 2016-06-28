@@ -53,9 +53,8 @@ export class ParticipantPage {
     console.log('itemAdded', newItem);
     event.preventDefault(); // added for ionic
     event.stopPropagation();
-    let item = new Item(newItem, this.participant.id);
-    item.insert(this.db);
-    this.participant.items.push(item);
+    let item = new Item(0, newItem, this.meetingParticipant.id);
+    item.insert(this.db).then(()=>this.participant.items.push(item));
   }
 
   requiredToggled(){

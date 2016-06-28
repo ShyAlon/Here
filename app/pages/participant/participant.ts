@@ -20,9 +20,11 @@ export class ParticipantPage {
   constructor(private _navController: NavController, private _navParams: NavParams, private server: Server, private db: DB) {
     this.participant = <Participant>(_navParams.get('participant'));
     this.meeting = <Meeting>(_navParams.get('meeting'));
+    console.log(this.meeting);
+
     this.server.getperson(this.participant.id)
       .then((participant: Participant) => this.participant = participant);
-    this.server.getMeetingParticipant(this.participant.id, this.meeting.id)
+    this.server.getMeetingParticipant(this.participant.pid, this.meeting.id)
       .then((mp: MeetingParticipant[]) => this.gotPM(mp))
       .then(()=> this.server.getItems(this.meetingParticipant.id))
       .then((items: Item[]) => this.participant.items = items)

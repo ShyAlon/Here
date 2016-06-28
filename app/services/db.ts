@@ -8,23 +8,18 @@ export class DB {
 
     constructor() {     
         DB.storage = new Storage(SqlStorage);
-        this.createMeetingTable()
-        .then(()=>this.createParticipantsTable)
-        .then(()=>this.createParticipantMeetingsTable)
-        .then(()=>this.createItemTable)
-        .then(() => console.log(' DB Initialized'))
+        this.createMeetingTable();
+        this.createParticipantMeetingsTable();
+        this.createItemTable();
+        //.then(() => console.log(' DB Initialized'))
     }
 
     createMeetingTable(){
         return this.createTable('meetings', 'title	TEXT,	timestamp	INTEGER,	startTime	INTEGER,	endTime	INTEGER,	location	TEXT');
     }
 
-    createParticipantsTable(){
-        return this.createTable('participants', 'pid	TEXT NOT NULL UNIQUE');
-    }
-
     createParticipantMeetingsTable(){
-        return this.createTable('meetingParticipants', 'participant	INTEGER,	meeting	INTEGER,	importance	INTEGER');
+        return this.createTable('meetingParticipants', 'pid	TEXT,	meeting	INTEGER,	importance	INTEGER');
     }
 
     createItemTable(){
@@ -33,7 +28,7 @@ export class DB {
 
     createTable(name, columns){
         return DB.storage.query('CREATE TABLE IF NOT EXISTS ' + name + ' (id INTEGER PRIMARY KEY AUTOINCREMENT, ' + columns + ')').then((data) => {
-            console.log("TABLE CREATED -> ", data);
+            // console.log("TABLE CREATED -> ", data);
         }, (error) => {
             console.log("ERROR -> ", error.err);
         });
@@ -62,7 +57,11 @@ export class DB {
 
     delete(table, item: ItemBase){
         let query = "DELETE FROM " + table + " WHERE ID = " + item.id;
-        console.log('Delete', query);
+        return DB.storage.query(query);
+    }
+
+    deleteWhere(table, where){
+        let query = "DELETE FROM " + table + " WHERE " + where;
         return DB.storage.query(query);
     }
 
@@ -81,7 +80,7 @@ export class DB {
                 }
                 //console.log(data.res.rows);
                 //console.log(result);
-                console.log("DB::Select Success", str);
+                //console.log("DB::Select Success", str);
                 return result;
             }, (error) => {
                 console.log("DB::Select ERROR", str);

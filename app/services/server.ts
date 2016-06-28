@@ -1,5 +1,6 @@
 
 import { Injectable } from '@angular/core';
+import {Platform} from 'ionic-angular';
 import {Participant, Phone, Meeting, MeetingParticipant, Item} from '../common/meeting'
 import {DB} from './db'
 
@@ -12,12 +13,15 @@ export class Server {
     pool: Participant[];
     storage: Storage;
     static milis: number;
-    static items:Meeting[];
+    static items: Meeting[];
+    // Whether we run in simulation 
+    static simulation: Boolean;
 
     constructor(public db: DB) {
         this.meetings = [];
         this.pool = Server.getPool();
         Server.milis = 1000 * 60 * 60 * 24 * 365;
+        Server.simulation = true;
     }
 
 
@@ -25,11 +29,11 @@ export class Server {
         return new Promise((resolve, reject) => this.getPersonImpl(resolve, reject, id));
     }
 
-    getMeetingParticipant(participantId, meetingId){
+    getMeetingParticipant(participantId, meetingId) {
         return MeetingParticipant.select(this.db, meetingId, participantId);
     }
 
-    getItems(meetingParticipantId){
+    getItems(meetingParticipantId) {
         return Item.select(this.db, meetingParticipantId);
     }
 
@@ -56,17 +60,33 @@ export class Server {
     }
 
     // Get the participant ids and then populate the participants
-    getMeetingParticipants(meetingId: Number){
-        return MeetingParticipant.select(this.db, meetingId).then((data) =>{
-            // console.log('Meeting Participants', data);
-            return Participant.selectIn(this.db, data);
-        }, (error) => {console.log(error);});
+    getMeetingParticipants(meetingId: Number) {
+        return MeetingParticipant.select(this.db, meetingId).then((meetingParticipants: MeetingParticipant[]) => {
+            if (!meetingParticipants || meetingParticipants.length == 0) {
+                return new Promise((resolve, reject) => resolve([]));
+            }
+            let result = new Array<Participant>();
+            for (let i = 0; i < meetingParticipants.length; i++) {
+                let mp = meetingParticipants[i];
+                //console.log(mp);
+                for (let i = 0; i < this.pool.length; i++) {
+                    //console.log(this.pool[i]);
+                    if (this.pool[i].pid == mp.pid) {
+                        let contact = Server.sanitizeContact(this.pool[i])
+                        result.push(contact);
+                        break;
+                    }
+                }
+            }
+            return new Promise((resolve, reject) => resolve(result));
+            
+        }, (error) => { console.log(error); });
     }
 
-    getContact(pid){
+    getContact(pid) {
         this.pool = this.pool || Server.getPool();
-        for(let i = 0; i < this.pool.length; i++){
-            if(this.pool[i].pid == pid){
+        for (let i = 0; i < this.pool.length; i++) {
+            if (this.pool[i].pid == pid) {
                 return this.pool[i];
             }
         }

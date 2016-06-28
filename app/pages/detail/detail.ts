@@ -3,6 +3,7 @@ import {ParticipantPage} from '../participant/participant';
 import {Meeting, Participant, MeetingParticipant} from '../../common/meeting';
 import {NavController, NavParams} from 'ionic-angular';
 import {Server} from '../../services/server'
+import {ContactPage} from '../contact/contact'
 
 @Component({
   templateUrl: 'build/pages/detail/detail.html',
@@ -10,7 +11,6 @@ import {Server} from '../../services/server'
 })
 export class DetailPage {
   meeting: Meeting;
-  participants: Participant[];
   startTime: string;
   endTime: string;
   title: String;
@@ -18,16 +18,15 @@ export class DetailPage {
   constructor(private _navController: NavController, private _navParams: NavParams, private server: Server) {
     this.meeting = _navParams.get('meeting');
     this.title = this.meeting.title;
-    console.log(this.meeting);
+    //console.log(this.meeting);
     if(this.meeting.id){
         this.server.getMeetingParticipants(this.meeting.id).then( (data: Participant[]) =>{
         console.log('Got participants', data);
-        this.participants = data;
         // Now get the contact data from the Contacts services
         let result = [];
         for( let i = 0; i < data.length; i++){
           let contact = server.getContact(data[i].pid);
-          console.log('Contact', contact);
+          // console.log('Contact', contact);
           if(contact){
             result.push(contact);
           } else {
@@ -35,19 +34,20 @@ export class DetailPage {
           }
         }
         console.log('Contacts', result);
-        this.participants = result;
+        this.meeting.participants = result;
       });
       }
-      console.log(this.meeting);
+      //console.log(this.meeting);
       
       this.startTime = this.meeting.startTime ? this.meeting.startTime.toISOString() : (new Date()).toISOString();
       this.endTime = this.meeting.endTime ? this.meeting.endTime.toISOString() : (new Date()).toISOString();
   }
 
-  deleteParticipant(event, name) {
-    console.log('delete', name);
+  deleteParticipant(event, p: Participant) {
+    console.log('delete', p);
     event.preventDefault(); // added for ionic
     event.stopPropagation();
+    MeetingParticipant.delete(this.server.db, this.meeting.id, p.pid).then((data) => console.log(data));
   }
 
   editParticipant(event, name) {
@@ -79,5 +79,9 @@ export class DetailPage {
       this.meeting.title = this.title;
       this.meeting.update(this.server.db);
     }
+  }
+
+  addParticipant(event, newItem){
+    this._navController.push(ContactPage, { meeting: this.meeting });
   }
 }

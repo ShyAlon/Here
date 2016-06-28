@@ -55,27 +55,32 @@ export class Meeting extends ItemBase {
 
 
 export class MeetingParticipant extends ItemBase {
-  constructor(id: Number = 0, public meeting: Number = 0, public participant: Number = 0, public importance: Number = 0) {
+  constructor(id: Number = 0, public meeting: Number = 0, public pid: String = '', public importance: Number = 0) {
     super(id);
   }
 
   insert(db: DB) {
-    return db.insert('meetingParticipants', ['participant', 'meeting', 'importance'], [this.participant, this.meeting, this.importance], this);
+    return db.insert('meetingParticipants', ['pid', 'meeting', 'importance'], [Item.quote(this.pid), this.meeting, this.importance], this);
   }
 
   update(db: DB) {
     // UPDATE COMPANY SET ADDRESS = 'Texas' WHERE ID = 6;
-    return db.update('meetingParticipants', ['participant', 'meeting', 'importance'], [this.participant, this.meeting, this.importance], this);
+    return db.update('meetingParticipants', ['pid', 'meeting', 'importance'], [Item.quote(this.pid), this.meeting, this.importance], this);
   }
 
   static select(db: DB, meetingId: Number, participantId: Number = 0) {
     let where = ' where meeting = ' + meetingId;
     if (participantId) {
-      where = where + ' and participant = ' + participantId;
+      where = where + ' and pid = ' + Item.quote(participantId);
     }
-    return db.select('meetingParticipants', ['id', 'participant', 'meeting', 'importance'], function boo(item) {
-      return new MeetingParticipant(item.id, item.meeting, item.participant, item.importance);
+    return db.select('meetingParticipants', ['id', 'pid', 'meeting', 'importance'], function boo(item) {
+      return new MeetingParticipant(item.id, item.meeting, item.pid, item.importance);
     }, where);
+  }
+
+  static delete(db: DB, meetingId: Number, pid: string) {
+    let where = ' where meeting = ' + meetingId + ' and pid = ' + Item.quote(pid);
+    return db.deleteWhere('meetingParticipants', where);
   }
 }
 
@@ -108,33 +113,15 @@ export class Phone {
 
 export class Participant extends ItemBase {
   items: Item[];
+  participating: boolean;
+  
   participantMeeting: MeetingParticipant;
-  constructor(id = 0, public pid: String = '', public name: String = '', public email: String = '', public address: String = '', public gender: String = '', public phone: Phone = null) {
+  constructor(id = 0, public pid: string = '', public displayName: String = '', public email: String = '', public address: String = '', public gender: String = '', public phone: Phone = null) {
     super(id);
+    this.participating = false;
   }
 
   insert(db: DB) {
     db.insert('participants', ['pid'], [Item.quote(this.pid)], this);
-  }
-
-  static selectIn(db: DB, meetingParticipants: MeetingParticipant[]) {
-    if (!meetingParticipants || meetingParticipants.length == 0) {
-      return new Promise((resolve, reject) => resolve([]));
-    }
-
-    let where = ' where id in (';
-    for (let i = 0; i < meetingParticipants.length; i++) {
-      // console.log(meetingParticipants[i]);
-      where = where + meetingParticipants[i].participant;
-      if (meetingParticipants.length - i > 1) {
-        where = where + ',';
-      } else {
-        where = where + ')';
-      }
-    }
-
-    return db.select('participants', ['id','pid'], function boo(item) {
-      return new Participant(item.id, item.pid);
-    }, where);
   }
 }

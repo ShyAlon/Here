@@ -39,17 +39,17 @@
         <ion-label>Add From Contact List</ion-label>
         <button item-right round (click)="addParticipant($event)">Add</button>
       </ion-item>
-      <ion-item-sliding *ngFor="let participant of participants" (click)="editParticipant($event, participant)">
+      <ion-item-sliding *ngFor="let participant of meeting.participants" (click)="editParticipant($event, participant)">
         <ion-item>
-          {{participant.name}}
+          {{participant.displayName}}
         </ion-item>
         <ion-item-options>
           <button (click)="editParticipant($event, name)">
-            Edit {{participant.name}}
+            Edit {{participant.displayName}}
             <ion-icon name="contact"></ion-icon>
           </button>
           <button danger (click)="deleteParticipant($event, name)">
-            Delete {{participant.name}}
+            Delete {{participant.displayName}}
             <ion-icon name="trash"></ion-icon>
           </button>
         </ion-item-options>

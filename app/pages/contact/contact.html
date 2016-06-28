@@ -1,0 +1,19 @@
+<ion-navbar *navbar>
+  <ion-title>
+    Contacts
+  </ion-title>
+</ion-navbar>
+
+<ion-content class="contact">
+  <ion-list [hidden]="!search">
+    <ion-item style="position: fixed; z-index:100">
+      <button item-right (click)="findfn(contacttobefound)">Find</button>
+      <ion-label>Name</ion-label>
+      <ion-input type="text" [(ngModel)]="contacttobefound" placeholder="Display Name" ></ion-input>
+    </ion-item>
+    <ion-item *ngFor="let item of contactsfound" (click)="contactClicked(item)">
+      {{item.displayName}}
+      <i *ngIf="item.participating">(Already Participating)</i>
+    </ion-item>
+  </ion-list>
+</ion-content>

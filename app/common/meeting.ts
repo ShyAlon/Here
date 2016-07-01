@@ -26,11 +26,12 @@ export class ItemBase {
 export class Meeting extends ItemBase {
   endTime: Date;
   startTime: Date;
-  constructor(id: Number = 0, start: Number = (new Date()).getTime(), end: Number = (new Date()).getTime(), public title: String = '',
-    public participants: Participant[] = [], public scheduled: Boolean = true, public location: String = '') {
+  constructor(id: Number = 0, start: number = (new Date()).getTime(), end: number = (new Date()).getTime(), public title: string = 'New Meeting',
+    public participants: Participant[] = [], public scheduled: Boolean = true, public location: string = '') {
     super(id);
     this.startTime = start ? new Date(start) : new Date();
     this.endTime = end ? new Date(end) : new Date();
+    this.scheduled = true;
   }
 
   insert(db: DB) {

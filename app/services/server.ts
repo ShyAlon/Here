@@ -21,7 +21,7 @@ export class Server {
         this.meetings = [];
         this.pool = Server.getPool();
         Server.milis = 1000 * 60 * 60 * 24 * 365;
-        Server.simulation = true;
+        Server.simulation = false;
     }
 
 
